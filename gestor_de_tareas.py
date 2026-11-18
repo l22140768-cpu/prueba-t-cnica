@@ -8,7 +8,9 @@ def menu_principal(lista_tareas: list[dict]) -> None:
         print("3. Buscar tarea")
         print("4. Completar tarea")
         print("5. Eliminar tarea")
-        print("6. Salir")
+        print("6. Editar tarea") 
+        print("7. Consultar tareas pendientes") # Added option to edit a task
+        print("8. Salir")
 
         opcion = input("\nSelecciona una opción: ").strip()
 
@@ -23,10 +25,14 @@ def menu_principal(lista_tareas: list[dict]) -> None:
         elif opcion == "5":
             eliminar_tarea(lista_tareas)
         elif opcion == "6":
+            editar_tarea(lista_tareas)
+        elif opcion== "7":
+            consultar_pendientes(lista_tareas)
+        elif opcion == "8":
             print("Cerrando el programa.")
             break
         else:
-            print("Error: Opción no válida. Selecciona un número del 1 al 6.\n")
+            print("Error: Opción no válida. Selecciona un número del 1 al 7.\n")
 
 
 
@@ -158,6 +164,56 @@ def eliminar_tarea(lista_tareas: list[dict]) -> None:
             return
 
     print(f"No existe ninguna tarea con el ID {tarea_id}.\n")
+
+def editar_tarea(lista_tareas: list[dict]) -> None:
+    if not lista_tareas:
+        print("No hay tareas registradas para editar.\n")
+        return
+
+    consultar_tareas(lista_tareas)
+
+    entrada = input("Ingresa el ID de la tarea a editar: ").strip()
+    if not entrada.isdigit():
+        print("Error: El ID debe ser un número entero positivo.\n")
+        return
+
+    tarea_id = int(entrada)
+
+    for tarea in lista_tareas:
+        if tarea["id"] == tarea_id:
+            nuevo_titulo = input(f"Nuevo título (actual: {tarea['titulo']}): ").strip()
+
+            if nuevo_titulo:
+                tarea["titulo"] = nuevo_titulo
+                print(f"Tarea con ID {tarea_id} actualizada correctamente.\n")
+            else:
+                print("Error: El título no puede estar vacío. No se realizaron cambios.\n")
+        
+            nueva_prioridad = input(f"Nueva prioridad (actual: {tarea['prioridad']}): ").strip().lower()
+            if nueva_prioridad in ["alta", "media", "baja"]:
+                tarea["prioridad"] = nueva_prioridad
+                print(f"Tarea con ID {tarea_id} actualizada correctamente.\n")  
+            else:
+                print("Error: Prioridad no válida. No se realizaron cambios.\n")
+            return
+
+
+    print(f"No existe ninguna tarea con el ID {tarea_id}.\n")
+
+def consultar_pendientes(lista_tareas: list[dict]) -> None:
+    if not lista_tareas:
+        print("No hay tareas registradas.\n")
+        return
+    for tarea in lista_tareas:
+        estado = "Completada" if tarea["completada"] else "Pendiente"
+        if estado == "Pendiente":
+            print(
+                f"ID: {tarea['id']} | "
+                f"Título: {tarea['titulo']} | "
+                f"Prioridad: {tarea['prioridad']} | "
+                f"Estado: {estado}"
+            )     
+        print("\n")
 
 
 if __name__ == "__main__":
